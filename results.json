@@ -1,0 +1,50 @@
+{
+  "name": "Lovina Bhatia",
+  "email": "lovinabhatia06@gmail.com",
+  "model": "distilbert-base-uncased",
+  "seed": 42,
+  "device": "cpu",
+  "epochs": 3,
+  "learning_rate": 2e-05,
+  "batch_size": 16,
+  "max_length": 128,
+  "train_size": 140,
+  "val_size": 30,
+  "test_size": 30,
+  "accuracy": 1.0,
+  "f1_macro": 1.0,
+  "per_label": {
+    "ANALYSIS": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "HOT_TAKE": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "DISCUSSION": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      10,
+      0,
+      0
+    ],
+    [
+      0,
+      10,
+      0
+    ],
+    [
+      0,
+      0,
+      10
+    ]
+  ]
+}

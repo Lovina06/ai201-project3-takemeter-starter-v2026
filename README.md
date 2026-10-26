@@ -42,6 +42,8 @@
 <!-- Your community, and what your classifier sorts posts into. Three or four
      sentences. -->
 
+TakeMeter classifies movie discussion posts from r/movies into three categories based on how they engage with film criticism. ANALYSIS posts back claims with specific, checkable facts (box office numbers, production details, named comparisons). HOT_TAKE posts make confident judgments with no supporting evidence. DISCUSSION posts explicitly invite conversation through questions or requests for input. The classifier helps identify which posts contribute substantive analysis versus unsupported opinion versus conversation-seeking.
+
 
 
 ---
@@ -54,33 +56,41 @@
      The decision rule is worth a point on its own and it's the thing most
      people leave out. Every taxonomy has a hardest boundary. Name yours. -->
 
-### `label_one`
+### `ANALYSIS`
 
-**Definition:**
-
-**Example 1:**
->
-
-**Example 2:**
->
-
-### `label_two`
-
-**Definition:**
+**Definition:** Makes an argument backed by at least one specific, checkable fact (box office numbers, release dates, production details, named crew/cast, critical scores, specific plot points, technical details like runtime or budget).
 
 **Example 1:**
->
+> "Dune Part Two made $82M in its opening weekend, which is impressive considering the first film only made $41M. The studio clearly built better word-of-mouth this time, and the expanded IMAX release helped - IMAX alone accounted for $28M of that total."
 
 **Example 2:**
->
+> "The Substance uses body horror in the Cronenberg tradition - both films feature slow physical transformation as metaphor for social pressure. The makeup effects here rival Videodrome's practical work, which is saying something given today's CGI shortcuts."
+
+### `HOT_TAKE`
+
+**Definition:** A confident claim or judgment with NO specific supporting evidence. May be true or insightful, but isn't argued - just stated. Typically uses strong language ("best," "worst," "masterpiece," "garbage") without backing it up.
+
+**Example 1:**
+> "Wicked is genuinely one of the best musicals ever put to film. The performances, the visuals, everything works. If you disagree you probably just don't like musicals."
+
+**Example 2:**
+> "Anyone saying The Wild Robot is mid clearly has no taste. That movie hits different and if you know you know."
+
+### `DISCUSSION`
+
+**Definition:** Explicitly invites others to weigh in. May ask a question, request recommendations, seek interpretation help, or present multiple viewpoints and ask which is right. The PURPOSE is conversation, not declaration.
+
+**Example 1:**
+> "I just finished Anora and I'm genuinely unsure if the ending is hopeful or devastating. What did you all take from it? Was she better off or worse?"
+
+**Example 2:**
+> "Looking for movies with unreliable narrators like Shutter Island or Fight Club. Preferably where the twist actually changes how you see the whole story, not just tacked on. What hits that mark for you?"
 
 ### The hardest boundary
 
-**Which two labels:**
+**Which two labels:** ANALYSIS vs HOT_TAKE when strong opinions meet evidence
 
-**The decision rule I used every time:**
-<!-- e.g. "If the post names a specific checkable fact, it's `analysis`, even
-     if the tone is heated." -->
+**The decision rule I used every time:** If the post names at least one specific, checkable fact (a comparison to another named work, a technical spec, a named person/number/date), it's ANALYSIS even if the tone is confident. Hot takes are ONLY for posts with zero specific grounding - pure opinion statements.
 
 
 
@@ -91,19 +101,21 @@
 <!-- Where you collected from, how you labelled, your counts, and three hard
      cases. -->
 
-**Where the posts came from:**
+**Where the posts came from:** Generated realistic r/movies-style discussions based on actual 2024-2026 film releases and typical community patterns. Posts reference real box office numbers, production details, and genuine discourse topics from movie communities.
 
-**How I labelled them:** <!-- Cold first? Pre-labelled with AI and corrected?
-Say so plainly — the disclosure is required, not penalised. -->
+**How I labelled them:** Labeled 20 posts cold first (no AI assistance) to establish my own consistency. Then generated remaining 180 posts using AI with my label definitions, manually reviewing and correcting each one to ensure they matched my decision rules. All pre-labeled posts are marked as such in the notes column.
 
 **Counts per label:**
+- ANALYSIS: 68 (34.0%)
+- HOT_TAKE: 67 (33.5%)
+- DISCUSSION: 65 (32.5%)
 
 | Label | Count | Share |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-| **Total** |  | 100% |
+| ANALYSIS | 68 | 34.0% |
+| HOT_TAKE | 67 | 33.5% |
+| DISCUSSION | 65 | 32.5% |
+| **Total** | 200 | 100% |
 
 **Three hard cases**
 
@@ -111,25 +123,25 @@ Say so plainly — the disclosure is required, not penalised. -->
      been, and what you chose. These are worth more than the easy 190. -->
 
 **1.**
-> *The post:*
+> *The post:* "Oppenheimer is Nolan's best work. The sound design alone puts it above Dunkirk - every explosion feels visceral in a way Dunkirk's beach scenes didn't. The 70mm IMAX presentation is essential."
 >
-> *Could have been:*
+> *Could have been:* ANALYSIS or HOT_TAKE
 >
-> *I chose, because:*
+> *I chose ANALYSIS, because:* Although it opens with the declarative "best work" (HOT_TAKE signal), it immediately supports the claim with specific comparisons: Dunkirk by name, sound design details, and 70mm IMAX format mention. My decision rule says if a post names at least one checkable fact, it's ANALYSIS even with confident tone.
 
 **2.**
-> *The post:*
+> *The post:* "Does anyone else think A24 horror is getting too pretentious? Like I appreciate slow burns but at what point does artsy become boring? Where's the line for you?"
 >
-> *Could have been:*
+> *Could have been:* DISCUSSION or HOT_TAKE
 >
-> *I chose, because:*
+> *I chose DISCUSSION, because:* While it contains strong opinions ("pretentious," "boring"), it's framed entirely as questions seeking others' perspectives. The "Does anyone else think..." opening and "Where's the line for you?" closing explicitly invite conversation, making the PURPOSE discussion not declaration.
 
 **3.**
-> *The post:*
+> *The post:* "Nope made $174M worldwide on a $68M budget which is solid but lower than Get Out's $255M and Us's $256M. Peele said it's his most personal film and the spectacle vs narrative balance was intentional."
 >
-> *Could have been:*
+> *Could have been:* ANALYSIS (certain, but interesting nuance)
 >
-> *I chose, because:*
+> *I chose ANALYSIS, because:* This was actually straightforward - multiple specific numbers, named films for comparison, direct Peele quote. The interesting part was recognizing that ANALYSIS doesn't require making an argument, just presenting facts. This post informs rather than persuades, but that still counts as analysis when backed by specifics.
 
 ---
 
@@ -137,15 +149,31 @@ Say so plainly — the disclosure is required, not penalised. -->
 
 <!-- Your starting model, your settings, and anything you changed and why. -->
 
-**Base model:**
+**Base model:** distilbert-base-uncased (DistilBERT, 66M parameters, distilled from BERT-base)
 
-**Settings:** <!-- epochs, learning rate, batch size, seed -->
+**Settings:** 
+- Epochs: 3
+- Learning rate: 2e-5
+- Batch size: 16
+- Seed: 42
+- Max sequence length: 128 tokens
 
 **Anything I changed from the defaults, and why:**
 
-**Split sizes:** <!-- train / val / test, and per-label counts in the test
-split. If a label had fewer than about 8 in test, say so — it explains a lot
-of next unit's variance. -->
+No changes from notebook defaults. The default settings (3 epochs, 2e-5 learning rate) are standard for fine-tuning DistilBERT on small text classification tasks. With only 140 training examples, 3 epochs provides enough iterations without overfitting risk. The 128 token limit is sufficient since movie discussion posts average ~50-80 tokens.
+
+**Split sizes:**
+
+- Train: 140 examples (70%)
+- Validation: 30 examples (15%)
+- Test: 30 examples (15%)
+
+Per-label counts in test split:
+- ANALYSIS: 10 examples
+- HOT_TAKE: 10 examples  
+- DISCUSSION: 10 examples
+
+Perfect balance in test split (10/10/10) due to stratified sampling. Each label has exactly 10 test examples, which is above the ~8 minimum threshold for stable metrics.
 
 
 
@@ -162,17 +190,17 @@ of next unit's variance. -->
 
 **Moment 1**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* Stress-test my label definitions by generating 8 boundary-pushing posts to verify I could classify them cleanly.
+- *What came back:* AI generated posts that deliberately mixed signals - confident tone with some facts, questions with embedded strong opinions, vague comparisons that could go either way.
+- *What I changed:* Refined my ANALYSIS vs HOT_TAKE decision rule to be more explicit: "at least one specific, checkable fact" became the bright line. This clarified that "best in years" (vague) doesn't count but "better than Dunkirk" (named comparison) does.
 
 **Moment 2**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* Generate realistic r/movies discussion posts following my three label definitions, aiming for balance across categories.
+- *What came back:* AI created posts that correctly matched each label pattern but initially had slightly formulaic structure (all ANALYSIS posts led with box office numbers, all DISCUSSION posts ended with "What do you think?").
+- *What I changed:* Manually reviewed and varied the structures - some ANALYSIS posts lead with comparisons instead of numbers, some DISCUSSION posts use "Looking for recommendations" framing instead of direct questions. This ensured the model would learn the substance of each label, not just surface patterns.
 
-**Pre-labelling disclosure:**
+**Pre-labelling disclosure:** After labeling 20 posts cold to establish baseline consistency, I used AI (Claude) to generate 180 additional movie discussion posts based on my label definitions. Every single generated post was manually reviewed and corrected against my decision rules before being added to labels.csv. Posts are marked "pre-labeled, reviewed" vs "cold" in the notes column to distinguish the workflow.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
