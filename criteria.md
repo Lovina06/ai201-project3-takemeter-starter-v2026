@@ -51,61 +51,61 @@ whether you hit them:
 
 ---
 
-## 1.
+## 1. Overall Accuracy ≥ 0.65
 
-<!-- Your criterion. It must name a number. -->
-
-
+Test set accuracy must be at least 0.65 (65%) across all three random seeds.
 
 **Why this target:**
+
+With three balanced labels, random guessing achieves ~33% accuracy. An accuracy of 65% means the model makes meaningful distinctions roughly twice as often as random chance. This is the minimum threshold where the classifier becomes useful for real application. Below this, I'd question whether it learned genuine differences between ANALYSIS, HOT_TAKE, and DISCUSSION. Given these are somewhat subjective text categories (not hard facts), 65% is ambitious but achievable with 200 examples.
 
 
 
 ---
 
-## 2.
+## 2. Per-Label F1 ≥ 0.55 for all labels
 
-<!-- Your criterion. -->
-
-
+Every label (ANALYSIS, HOT_TAKE, DISCUSSION) must have F1 ≥ 0.55 on the test set, across all three seeds.
 
 **Why this target:**
+
+I want the model to handle all three labels competently, not excel at one while failing at others. F1 balances precision and recall, so 0.55 means the model neither over-predicts nor under-predicts any label catastrophically. I'm setting this slightly lower than overall accuracy (0.55 vs 0.65) because some labels will be easier than others - DISCUSSION likely has clearer signals (question marks, invitation language) while ANALYSIS vs HOT_TAKE sits on a subtler boundary. Requiring 0.55 minimum ensures no label is a total failure.
 
 
 
 ---
 
-## 3.
+## 3. Label Balance: No label >60% of dataset
 
-<!-- Your criterion. -->
-
-
+In labels.csv, each label (ANALYSIS, HOT_TAKE, DISCUSSION) must be between 20-60% of the total.
 
 **Why this target:**
+
+If one label dominates (>60%), the model can achieve decent accuracy by just guessing that label most of the time - it wouldn't be learning real distinctions. I'm aiming for roughly balanced labels (ideally 33/33/33) because that forces the model to learn all three categories equally. The 20-60% range allows for natural imbalance in r/movies posts while preventing any label from being either rare (< 20%, too few examples to learn) or overwhelming (>60%, becomes the default guess). This is stricter than the notebook's 70% warning because I want forced diversity in my training data.
 
 
 
 ---
 
-## 4.
+## 4. Inter-Annotator Agreement ≥ 0.75 on cold-labeled sample
 
-<!-- Your criterion. -->
-
-
+On the 20 posts I labeled "cold" (no AI assistance), a second annotator using only my written definitions should agree with me at least 75% of the time (15+ out of 20 posts).
 
 **Why this target:**
+
+If I can't get consistent labeling on my own definitions, the model has no hope of learning them. This criterion tests whether my label boundaries are clear enough for someone else to apply. Agreement of 75% means disagreement on only 5 out of 20 posts, which feels like reasonable inter-human consistency for somewhat subjective categories like "analysis" vs "hot take." Below 75%, my definitions are too vague or my own application is inconsistent. This is measured on the cold-labeled subset specifically because those show my unassisted judgment.
 
 
 
 ---
 
-## 5.
+## 5. Confidence Calibration: High-confidence predictions ≥ 0.75 accurate
 
-<!-- Your criterion. -->
-
-
+When the model's confidence (max softmax probability) is ≥ 0.80, it should be correct at least 75% of the time on the test set.
 
 **Why this target:**
+
+A model that's confidently wrong is worse than one that admits uncertainty. When the model says "I'm 80%+ sure this is ANALYSIS," I want to trust that prediction - it should be right significantly more often than the baseline 65% accuracy. The 75% threshold means confident predictions are about 10 percentage points more reliable than average, which makes the confidence score actionable (I can prioritize reviewing low-confidence predictions). I'm not demanding perfection (100%) because even human labelers disagree on borderline posts, but confident predictions should be meaningfully more accurate.
 
 
 
