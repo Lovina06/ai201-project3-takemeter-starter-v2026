@@ -223,16 +223,13 @@ Perfect balance in test split (10/10/10) due to stratified sampling. Each label 
 | F1 — `ANALYSIS` | 0.625 | 1.000 | +0.375 |
 | F1 — `DISCUSSION` | 0.000 | 1.000 | +1.000 |
 | F1 — `HOT_TAKE` | 0.000 | 1.000 | +1.000 |
-| F1 — `label_one` |  |  |  |
-| F1 — `label_two` |  |  |  |
-
 **What I predicted before I looked:**
-<!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
-     prediction made afterwards isn't one. -->
+
+See PREDICTION.md - predicted trained model would beat baseline by 15-25 percentage points, especially on ANALYSIS vs HOT_TAKE boundary (the hardest distinction). Actual gap was +66.7 points - even larger than expected.
 
 **What the gap actually means:**
-<!-- If the baseline matched your trained model, your fine-tuning added
-     nothing — and that is a real finding, not a failure. Say it plainly. -->
+
+The baseline's 33.3% accuracy (random-guess level for 3 labels) confirms that zero-shot classification with definitions alone cannot learn the nuanced patterns in movie discussion posts. The model needs examples to distinguish fact-backed analysis from unsupported opinions. Fine-tuning added 66.7 percentage points, proving the task requires training on domain-specific examples. The baseline only succeeded on ANALYSIS (F1: 0.625) and completely failed on DISCUSSION and HOT_TAKE (F1: 0.0 for both), while the trained model achieved near-perfect performance across all three labels.
 
 
 
@@ -245,27 +242,40 @@ Perfect balance in test split (10/10/10) due to stratified sampling. Each label 
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.65 | 1.000 | 0.967 | 0.933 | **MET** |
+| 2. Per-label F1 | all ≥ 0.55 | 1.0/1.0/1.0 | 0.947/0.952/1.0 | 0.947/0.909/0.947 | **MET** |
+| 3. Label balance | 20-60% each | 34/33.5/32.5% | 34/33.5/32.5% | 34/33.5/32.5% | **MET** |
+| 4. Inter-annotator agreement | ≥ 0.75 on cold | 97% (staff) | 97% (staff) | 97% (staff) | **MET** |
+| 5. Confidence calibration | ≥ 0.75 when conf ≥ 0.80 | Not tested | Not tested | Not tested | **NOT TESTED** |
 
 ### Confusion matrix
 
 <!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
      An image of a matrix earns nothing. -->
 
-| true \ predicted |  |  |  |
+**Seed 42 (perfect matrix):**
+
+| true \ predicted | ANALYSIS | HOT_TAKE | DISCUSSION |
 |---|---|---|---|
-| **** |  |  |  |
-| **** |  |  |  |
-| **** |  |  |  |
+| **ANALYSIS** | 10 | 0 | 0 |
+| **HOT_TAKE** | 0 | 10 | 0 |
+| **DISCUSSION** | 0 | 0 | 10 |
+
+**Seed 2024 (showing errors):**
+
+| true \ predicted | ANALYSIS | HOT_TAKE | DISCUSSION |
+|---|---|---|---|
+| **ANALYSIS** | 9 | 1 | 0 |
+| **HOT_TAKE** | 0 | 10 | 0 |
+| **DISCUSSION** | 0 | 1 | 9 |
 
 **My biggest off-diagonal number, and what it means:**
-<!-- Not "the model made mistakes" — WHICH boundary it didn't learn, and which
-     direction. "7 real analysis posts were called hot_take and only 3 went the
-     other way" is a direction, not just an error rate. -->
+
+Across all three seeds, there were 3 total errors, all in the same direction: true ANALYSIS or DISCUSSION posts being predicted as HOT_TAKE. Specifically:
+- 2 ANALYSIS → HOT_TAKE (seeds 7 and 2024)
+- 1 DISCUSSION → HOT_TAKE (seed 2024)
+
+This pattern reveals the model's one weakness: when posts contain strong opinions (even if backed by facts or seeking discussion), the model occasionally over-predicts HOT_TAKE. The reverse never happened - no HOT_TAKE posts were mislabeled as ANALYSIS or DISCUSSION. This suggests the model learned the "no evidence" rule for HOT_TAKE perfectly but sometimes applied it too broadly to posts with assertive tone.
 
 
 
