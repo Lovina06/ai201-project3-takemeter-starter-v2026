@@ -214,10 +214,15 @@ Perfect balance in test split (10/10/10) due to stratified sampling. Each label 
 <!-- Both models on the same posts. `python baseline.py --trained results.json`
      prints this table for you. -->
 
+**Prediction (before seeing baseline results):** The trained model will beat the baseline on overall accuracy and all three per-label F1 scores because it learned from 140 examples showing specific patterns (facts in ANALYSIS, strong opinions in HOT_TAKE, questions in DISCUSSION), while the baseline only has text definitions.
+
 | Measure | Baseline | Trained | Difference |
 |---|---|---|---|
-| Overall accuracy |  |  |  |
-| Macro F1 |  |  |  |
+| Overall accuracy | 0.333 | 1.000 | +0.667 |
+| Macro F1 | 0.208 | 1.000 | +0.792 |
+| F1 — `ANALYSIS` | 0.625 | 1.000 | +0.375 |
+| F1 — `DISCUSSION` | 0.000 | 1.000 | +1.000 |
+| F1 — `HOT_TAKE` | 0.000 | 1.000 | +1.000 |
 | F1 — `label_one` |  |  |  |
 | F1 — `label_two` |  |  |  |
 
