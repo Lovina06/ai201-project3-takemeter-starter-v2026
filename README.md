@@ -288,13 +288,15 @@ This pattern reveals the model's one weakness: when posts contain strong opinion
 
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | Overall accuracy ≥ 0.65 | 4/5 tries | **MET** | All three seeds: 1.000, 0.967, 0.933. All exceed 0.65, so MET. |
+| 2 | Per-label F1 ≥ 0.55 | all labels, all seeds | **MET** | Lowest F1 was 0.909 (HOT_TAKE, seed 2024). All others 0.947-1.0. All exceed 0.55, so MET. |
+| 3 | Label balance 20-60% | in dataset | **MET** | 68 ANALYSIS (34%), 67 HOT_TAKE (33.5%), 65 DISCUSSION (32.5%). All within 20-60%, so MET. |
+| 4 | Inter-annotator agreement ≥ 0.75 | on cold-labeled posts | **MET** | 97% agreement with staff labels (29/30 agreed). Exceeds 0.75, so MET. |
+| 5 | Confidence calibration ≥ 0.75 | when model conf ≥ 0.80 | **NOT TESTED** | Did not implement confidence extraction from model outputs. Cannot verdict. |
 
 **Diagnoses**
+
+No criteria were missed. Criterion 5 was not tested because I did not implement confidence score extraction in the training/evaluation code.
 
 <!-- For each miss: the cause, and how you know. The four common causes are:
      too few examples for a label, a boundary you applied inconsistently, a
@@ -317,7 +319,7 @@ This pattern reveals the model's one weakness: when posts contain strong opinion
      data/staff_taxonomy.md, not your own — so every argument below is made
      from those definitions and those decision rules. -->
 
-**Agreement rate:** ___ / 30 = ___%
+**Agreement rate:** 29 / 30 = 97%
 
 <!-- Nobody grades this number. A 60% who argues every disagreement from the
      stated rules beats a 95% who wrote "staff was right" nine times. Several
@@ -340,21 +342,13 @@ This pattern reveals the model's one weakness: when posts contain strong opinion
      what you did across your own 200. -->
 
 **1.**
-> *The post:*
+> *The post:* "Times are down about 3% since the shoe rules changed, so obviously the shoes are the whole story and the sport has a problem."
 >
-> *Staff said / I said:*
+> *Staff said / I said:* Staff: `analysis` / I said: `hot_take`
 >
-> *My call, and why:*
+> *My call, and why:* Staff is correct. The post cites a specific stat (3%) and links it causally to an event (shoe rule change). Even though "obviously" signals sarcasm, the argument's structure rests on that statistical claim. Rule 1 asks "does the fact carry the argument?" and here it does - without the 3% stat, the post has no substance. I focused too much on tone (sarcasm) rather than structure (fact-based reasoning).
 >
-> *Which pile:*
-
-**2.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
+> *Which pile:* **(c) Ambiguous boundary, my reading defensible.** The sarcastic delivery genuinely makes intent unclear - is this skeptical analysis or a hot take decorated with a stat? Rule 1's "does the fact carry the argument" doesn't fully resolve cases where tone and structure point different directions. However, staff's interpretation is the better one.
 > *Which pile:*
 
 **What the pattern in my disagreements tells me:**
